@@ -1,0 +1,30 @@
+#include<SPI.h>
+#include<RF24Network.h>
+#include<RF24.h>
+
+
+RF24 radio(7,8); //Pins 7 and 8 go to the CE and CSN of the nRF
+RF24Network network(radio);
+
+const uint16_t master = 01; //For 05 and 06 make the master 04
+const uint16_t thisNode = 02; //For 03 05 and 06 change this
+  
+void setup()
+{
+  SPI.begin();
+  radio.begin();
+  network.begin(90,thisNode); //no idea what the 90 does apparently it's the "channel"
+  radio.setDataRate(RF24_2MBPS);
+}
+
+void loop()
+{
+  network.update();
+  //Recieving
+  while(network.available()){
+    //Sending
+    RF24NetworkHeader header(master); //sets node to send to
+    unsigned long data_out;
+    network.read(header,&data_out,sizeof(data_out));
+  }
+}
